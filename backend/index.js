@@ -65,6 +65,36 @@ app.get('/api/registry/contributors', (req, res) => {
   res.json(contributors);
 });
 
+app.get('/api/registry/contributors/:did', (req, res) => {
+  const { did } = req.params;
+  const credential = Object.values(credentials).find((item) => item.did === did);
+
+  if (!credential) {
+    return res.status(404).json({ error: 'Contributor not found' });
+  }
+
+  const vcPayload = JSON.parse(Buffer.from(credential.vc.split('.')[1], 'base64').toString());
+
+  res.json({
+    did: credential.did,
+    githubUsername: credential.githubUsername,
+    vc: credential.vc,
+    decodedVC: vcPayload,
+    didDocument: {
+      '@context': 'https://www.w3.org/ns/did/v1',
+      id: did,
+      verificationMethod: [
+        {
+          id: `${did}#key-1`,
+          type: 'Ed25519VerificationKey2020',
+          controller: did,
+          publicKeyMultibase: did.split(':')[2]
+        }
+      ]
+    }
+  });
+});
+
 app.post('/api/verification/verify-pr', (req, res) => {
   const { githubUsername } = req.body;
   const vc = credentials[githubUsername]?.vc;
