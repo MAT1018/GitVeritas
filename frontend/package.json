@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Frontend for GitVeritas DID/VC contributor verification",
   "main": "src/index.tsx",
+  "proxy": "http://localhost:3001",
   "scripts": {
     "build": "react-scripts build",
     "start": "react-scripts start",
