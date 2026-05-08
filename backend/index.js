@@ -1,14 +1,41 @@
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const DB_PATH = path.join(__dirname, 'db.json');
 
 app.use(cors());
 app.use(express.json());
 
-// In-memory storage
-const credentials = {};
+// Local storage persisted in db.json
+let credentials = {};
+
+function loadDatabase() {
+  try {
+    if (!fs.existsSync(DB_PATH)) {
+      fs.writeFileSync(DB_PATH, JSON.stringify({ credentials: {} }, null, 2));
+    }
+    const raw = fs.readFileSync(DB_PATH, 'utf-8');
+    const data = JSON.parse(raw);
+    credentials = data.credentials || {};
+  } catch (error) {
+    console.error('Failed to load database:', error);
+    credentials = {};
+  }
+}
+
+function saveDatabase() {
+  try {
+    fs.writeFileSync(DB_PATH, JSON.stringify({ credentials }, null, 2));
+  } catch (error) {
+    console.error('Failed to save database:', error);
+  }
+}
+
+loadDatabase();
 
 // Mock DID generation
 function createDID() {
@@ -50,6 +77,7 @@ app.post('/api/contributors/onboard', (req, res) => {
   }, 'mock', did);
 
   credentials[githubUsername] = { did, vc, githubUsername };
+  saveDatabase();
 
   res.json({ did, vc, gpgFingerprint: 'A1B2C3D4' });
 });
