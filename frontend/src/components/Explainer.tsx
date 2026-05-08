@@ -2,134 +2,77 @@ import React from 'react';
 
 function Explainer() {
   return (
-    <div className="max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">How GitVeritas Works</h2>
-
-      <div className="space-y-8">
-        <section>
-          <h3 className="text-xl font-semibold mb-4">What is a DID (Decentralized Identifier)?</h3>
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <p className="mb-2">
-              A DID is a unique identifier that is controlled by the entity it identifies.
-              Unlike traditional identifiers (email, username), DIDs are:
-            </p>
-            <ul className="list-disc list-inside space-y-1 text-sm">
-              <li><strong>Self-sovereign:</strong> You control your own identity</li>
-              <li><strong>Portable:</strong> Works across different services</li>
-              <li><strong>Cryptographically verifiable:</strong> Can prove ownership</li>
-            </ul>
-            <div className="mt-3">
-              <p className="text-sm font-medium">Example DID (did:key):</p>
-              <code className="block bg-white p-2 rounded text-xs mt-1">
-                did:key:z6MkfrQC9BjPQ1A1J9gGjVL7C9d1ZQ9JzKJ9Vj8QXJGJgQK
-              </code>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h3 className="text-xl font-semibold mb-4">What is a Verifiable Credential (VC)?</h3>
-          <div className="bg-green-50 p-4 rounded-lg">
-            <p className="mb-2">
-              A VC is a tamper-proof credential containing claims about a subject.
-              It's issued by a trusted party and can be verified by anyone.
-            </p>
-            <div className="mt-3">
-              <p className="text-sm font-medium">Example VC Structure:</p>
-              <pre className="bg-white p-3 rounded text-xs mt-1 overflow-auto">
-{`{
-  "vc": {
-    "@context": ["https://www.w3.org/2018/credentials/v1"],
-    "type": ["VerifiableCredential", "ContributorCredential"],
-    "issuer": "did:key:z6MkfrQC9BjPQ1A1J9gGjVL7C9d1ZQ9JzKJ9Vj8QXJGJgQK",
-    "credentialSubject": {
-      "githubUsername": "johndoe",
-      "gpgPublicKeyFingerprint": "A1B2C3D4E5F67890",
-      "issuedAt": "2024-01-01T00:00:00.000Z"
-    }
-  }
-}`}
-              </pre>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h3 className="text-xl font-semibold mb-4">What is a Verifiable Presentation (VP)?</h3>
-          <div className="bg-purple-50 p-4 rounded-lg">
-            <p className="mb-2">
-              A VP is a collection of VCs presented by the subject to prove claims.
-              It's like showing your driver's license to prove your age.
-            </p>
-            <div className="mt-3">
-              <p className="text-sm font-medium">Example VP (what a contributor might present):</p>
-              <pre className="bg-white p-3 rounded text-xs mt-1 overflow-auto">
-{`{
-  "@context": ["https://www.w3.org/2018/credentials/v1"],
-  "type": "VerifiablePresentation",
-  "verifiableCredential": [
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9..." // VC JWT
-  ]
-}`}
-              </pre>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h3 className="text-xl font-semibold mb-4">Old Way vs New Way</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-red-50 p-4 rounded-lg">
-              <h4 className="font-medium text-red-800 mb-2">Old Way: GitHub Email</h4>
-              <ul className="text-sm text-red-700 space-y-1">
-                <li>• Relies on email verification</li>
-                <li>• Easy to spoof with fake accounts</li>
-                <li>• No cryptographic proof</li>
-                <li>• Centralized control</li>
-                <li>• Limited to GitHub's trust model</li>
-              </ul>
-            </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h4 className="font-medium text-green-800 mb-2">New Way: DID + VC</h4>
-              <ul className="text-sm text-green-700 space-y-1">
-                <li>• Cryptographically verifiable identity</li>
-                <li>• Self-sovereign (user controls identity)</li>
-                <li>• Portable across platforms</li>
-                <li>• Tamper-proof credentials</li>
-                <li>• Decentralized trust model</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h3 className="text-xl font-semibold mb-4">The Verification Flow</h3>
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <span className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
-                <p><strong>Contributor Onboards:</strong> Creates DID, links GPG key, receives VC</p>
-              </div>
-              <div className="flex items-center">
-                <span className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
-                <p><strong>PR Submitted:</strong> GitHub webhook triggers verification</p>
-              </div>
-              <div className="flex items-center">
-                <span className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
-                <p><strong>VC Verification:</strong> Check VC signature and validity</p>
-              </div>
-              <div className="flex items-center">
-                <span className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
-                <p><strong>GPG Check:</strong> Verify commit signature matches VC fingerprint</p>
-              </div>
-              <div className="flex items-center">
-                <span className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">5</span>
-                <p><strong>Status Update:</strong> Green checkmark allows merge</p>
-              </div>
-            </div>
-          </div>
-        </section>
+    <div className="animated-rise mx-auto max-w-5xl space-y-6">
+      <div>
+        <h2 className="section-title">How GitVeritas Works</h2>
+        <p className="section-subtitle">A cryptographic trust fabric for high-integrity open source contribution.</p>
       </div>
+
+      <section className="glass-panel p-6">
+        <h3 className="text-xl font-semibold text-white">DID: Self-owned identity</h3>
+        <p className="mt-3 text-sm text-slate-200">
+          Decentralized identifiers are portable, cryptographically verifiable IDs controlled by the contributor.
+        </p>
+        <code className="code-shell mt-3 break-all">did:key:z6MkfrQC9BjPQ1A1J9gGjVL7C9d1ZQ9JzKJ9Vj8QXJGJgQK</code>
+      </section>
+
+      <section className="grid gap-6 md:grid-cols-2">
+        <article className="glass-panel p-6">
+          <h3 className="text-xl font-semibold text-white">Verifiable Credential</h3>
+          <p className="mt-3 text-sm text-slate-200">Tamper-evident claims signed by a trusted issuer.</p>
+          <pre className="code-shell mt-3 overflow-auto">{`{
+  "type": ["VerifiableCredential", "ContributorCredential"],
+  "issuer": "did:key:...",
+  "credentialSubject": { "githubUsername": "johndoe" }
+}`}</pre>
+        </article>
+
+        <article className="glass-panel p-6">
+          <h3 className="text-xl font-semibold text-white">Verifiable Presentation</h3>
+          <p className="mt-3 text-sm text-slate-200">Contributor submits proof set during verification.</p>
+          <pre className="code-shell mt-3 overflow-auto">{`{
+  "type": "VerifiablePresentation",
+  "verifiableCredential": ["eyJ0eXAiOiJKV1QiLCJhbGciOi..."]
+}`}</pre>
+        </article>
+      </section>
+
+      <section className="grid gap-6 md:grid-cols-2">
+        <div className="glass-panel border-rose-300/25 bg-rose-300/10 p-6">
+          <h3 className="text-xl font-semibold text-rose-100">Legacy Trust Model</h3>
+          <ul className="mt-3 space-y-2 text-sm text-rose-50">
+            <li>Relies on mutable account metadata</li>
+            <li>Weak cryptographic binding to contributor identity</li>
+            <li>Platform-centered trust assumptions</li>
+          </ul>
+        </div>
+        <div className="glass-panel border-emerald-300/25 bg-emerald-300/10 p-6">
+          <h3 className="text-xl font-semibold text-emerald-100">DID + VC Trust Model</h3>
+          <ul className="mt-3 space-y-2 text-sm text-emerald-50">
+            <li>Portable, user-controlled identity anchors</li>
+            <li>Signed and independently verifiable assertions</li>
+            <li>End-to-end integrity checks before merge</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className="glass-panel p-6">
+        <h3 className="text-xl font-semibold text-white">Verification Flow</h3>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {[
+            'Onboard and issue DID + VC',
+            'PR triggers verification job',
+            'Validate VC signature',
+            'Match commit GPG fingerprint',
+            'Publish merge-ready status'
+          ].map((step, index) => (
+            <div key={step} className="rounded-xl border border-white/15 bg-white/5 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-cyan-200">Step {index + 1}</p>
+              <p className="mt-2 text-sm text-slate-100">{step}</p>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

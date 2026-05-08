@@ -16,7 +16,7 @@ function Verification() {
     try {
       const response = await axios.post(`${API_BASE}/verification/verify-pr`, {
         githubUsername: githubUsername.trim(),
-        gpgSignature: gpgSignature.trim() || `${githubUsername}-signature-${Date.now()}` // Mock signature
+        gpgSignature: gpgSignature.trim() || `${githubUsername}-signature-${Date.now()}`
       });
       setResult(response.data);
     } catch (error) {
@@ -28,71 +28,60 @@ function Verification() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Pull Request Verification Simulator</h2>
+    <div className="animated-rise mx-auto max-w-3xl space-y-5">
+      <div>
+        <h2 className="section-title">Pull Request Verification</h2>
+        <p className="section-subtitle">Simulate the proof chain validation before allowing code merge.</p>
+      </div>
 
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="glass-panel p-6 sm:p-7">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              PR Author GitHub Username
-            </label>
+            <label className="label-text">PR Author GitHub Username</label>
             <input
               type="text"
               value={githubUsername}
               onChange={(e) => setGithubUsername(e.target.value)}
               placeholder="Enter PR author's GitHub username"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="input-premium"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Commit GPG Signature (Mock)
-            </label>
+            <label className="label-text">Commit GPG Signature (Mock)</label>
             <input
               type="text"
               value={gpgSignature}
               onChange={(e) => setGpgSignature(e.target.value)}
-              placeholder="Mock GPG signature - leave empty for auto-generate"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Leave empty for auto-generate"
+              className="input-premium"
             />
           </div>
 
           <button
             onClick={handleVerify}
             disabled={loading || !githubUsername.trim()}
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary w-full"
           >
             {loading ? 'Verifying...' : 'Open PR (Simulate)'}
           </button>
         </div>
 
         {result && (
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-4">Verification Result</h3>
+          <div className="mt-6 space-y-4">
+            <h3 className="text-lg font-semibold text-white">Verification Result</h3>
 
-            <div className={`p-4 rounded-md ${result.verified ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-              <div className="flex items-center">
-                <span className={`text-2xl mr-3 ${result.verified ? 'text-green-600' : 'text-red-600'}`}>
-                  {result.verified ? '✅' : '❌'}
-                </span>
-                <div>
-                  <p className={`font-medium ${result.verified ? 'text-green-800' : 'text-red-800'}`}>
-                    {result.status}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {result.explanation}
-                  </p>
-                </div>
-              </div>
+            <div className={`rounded-xl border p-4 ${result.verified ? 'border-emerald-300/30 bg-emerald-400/10' : 'border-rose-300/30 bg-rose-400/10'}`}>
+              <p className={`text-base font-semibold ${result.verified ? 'text-emerald-100' : 'text-rose-100'}`}>
+                {result.verified ? 'Verified' : 'Rejected'}: {result.status}
+              </p>
+              <p className="mt-2 text-sm text-slate-200">{result.explanation}</p>
             </div>
 
             {result.verified && (
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
-                <p className="text-blue-800 text-sm">
-                  <strong>GitHub Status Check:</strong> This would appear as a green checkmark on the PR,
-                  allowing the contribution to be merged with confidence.
+              <div className="rounded-xl border border-cyan-300/30 bg-cyan-300/10 p-4">
+                <p className="text-sm text-cyan-100">
+                  GitHub status check would appear as a green checkmark, allowing merge with confidence.
                 </p>
               </div>
             )}

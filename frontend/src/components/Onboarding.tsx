@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:3001/api';
 
 interface OnboardingProps {
   onOnboard: () => void;
@@ -21,38 +21,44 @@ function Onboarding({ onOnboard }: OnboardingProps) {
         githubUsername: githubUsername.trim()
       });
       setResult(response.data);
-      onOnboard(); // Refresh registry
-    } catch (error) {
+      onOnboard();
+    } catch (error: any) {
       console.error('Onboarding failed:', error);
-      alert('Onboarding failed. Please try again.');
+      if (error?.code === 'ERR_NETWORK') {
+        alert(`Onboarding failed: cannot reach backend at ${API_BASE}. Start backend server and try again.`);
+      } else {
+        const message = error?.response?.data?.error || error?.message || 'Please try again.';
+        alert(`Onboarding failed: ${message}`);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Contributor Onboarding</h2>
+    <div className="animated-rise mx-auto max-w-3xl space-y-5">
+      <div>
+        <h2 className="section-title">Contributor Onboarding</h2>
+        <p className="section-subtitle">Generate your DID and receive a verifiable credential in one secure flow.</p>
+      </div>
 
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="glass-panel p-6 sm:p-7">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              GitHub Username
-            </label>
+            <label className="label-text">GitHub Username</label>
             <input
               type="text"
               value={githubUsername}
               onChange={(e) => setGithubUsername(e.target.value)}
               placeholder="Enter your GitHub username"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="input-premium"
             />
           </div>
 
           <button
             onClick={handleOnboard}
             disabled={loading || !githubUsername.trim()}
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary w-full"
           >
             {loading ? 'Onboarding...' : 'Login with GitHub (Mock)'}
           </button>
@@ -60,36 +66,28 @@ function Onboarding({ onOnboard }: OnboardingProps) {
 
         {result && (
           <div className="mt-6 space-y-4">
-            <h3 className="text-lg font-semibold">Onboarding Complete!</h3>
+            <h3 className="text-lg font-semibold text-emerald-200">Onboarding Complete</h3>
 
             <div>
-              <h4 className="font-medium">Your DID:</h4>
-              <code className="block bg-gray-100 p-2 rounded text-sm break-all">
-                {result.did}
-              </code>
+              <h4 className="label-text">Your DID</h4>
+              <code className="code-shell break-all">{result.did}</code>
             </div>
 
             <div>
-              <h4 className="font-medium">GPG Public Key Fingerprint:</h4>
-              <code className="block bg-gray-100 p-2 rounded text-sm">
-                {result.gpgFingerprint}
-              </code>
+              <h4 className="label-text">GPG Public Key Fingerprint</h4>
+              <code className="code-shell">{result.gpgFingerprint}</code>
             </div>
 
             <div>
-              <h4 className="font-medium">Verifiable Credential (JWT):</h4>
-              <details className="mt-2">
-                <summary className="cursor-pointer text-sm text-indigo-600">Show Raw JWT</summary>
-                <code className="block bg-gray-100 p-2 rounded text-xs break-all mt-2">
-                  {result.vc}
-                </code>
+              <h4 className="label-text">Verifiable Credential (JWT)</h4>
+              <details className="mt-2 rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-slate-300">
+                <summary className="cursor-pointer text-cyan-200">Show Raw JWT</summary>
+                <code className="code-shell mt-3 break-all">{result.vc}</code>
               </details>
             </div>
 
-            <div className="bg-green-50 border border-green-200 rounded p-4">
-              <p className="text-green-800">
-                ✅ Your identity has been verified and stored in the registry!
-              </p>
+            <div className="rounded-xl border border-emerald-300/30 bg-emerald-400/10 p-4">
+              <p className="text-sm text-emerald-100">Identity verified and stored in the contributor registry.</p>
             </div>
           </div>
         )}

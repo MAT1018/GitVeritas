@@ -1,3 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply m-0 min-h-screen bg-[#070b18] text-slate-100;
+    font-family: 'Manrope', sans-serif;
+    background-image:
+      radial-gradient(circle at 12% 20%, rgba(40, 197, 255, 0.18), transparent 30%),
+      radial-gradient(circle at 88% 10%, rgba(255, 158, 58, 0.2), transparent 32%),
+      radial-gradient(circle at 82% 78%, rgba(34, 197, 94, 0.14), transparent 35%),
+      linear-gradient(140deg, #060913 0%, #0a1025 48%, #05070f 100%);
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply rounded-2xl border border-white/15 bg-white/5 shadow-[0_20px_60px_rgba(3,8,20,0.45)] backdrop-blur-xl;
+  }
+
+  .section-title {
+    @apply text-2xl sm:text-3xl font-semibold text-white;
+  }
+
+  .section-subtitle {
+    @apply mt-2 text-sm text-slate-300;
+  }
+
+  .label-text {
+    @apply mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-300;
+  }
+
+  .input-premium {
+    @apply w-full rounded-xl border border-white/15 bg-slate-950/40 px-4 py-3 text-sm text-slate-100 outline-none transition duration-300 placeholder:text-slate-400/70 focus:border-cyan-300/70 focus:ring-2 focus:ring-cyan-200/30;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-300 via-sky-400 to-emerald-300 px-5 py-3 text-sm font-semibold tracking-wide text-slate-950 transition duration-300 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .code-shell {
+    @apply block rounded-xl border border-cyan-200/15 bg-slate-950/70 p-3 text-xs text-cyan-100;
+  }
+
+  .animated-rise {
+    animation: riseIn 0.55s ease-out both;
+  }
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
