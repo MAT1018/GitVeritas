@@ -9,6 +9,8 @@ interface OnboardingProps {
 
 function Onboarding({ onOnboard }: OnboardingProps) {
   const [githubUsername, setGithubUsername] = useState('');
+  const [githubId, setGithubId] = useState('');
+  const [githubProfileUrl, setGithubProfileUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
 
@@ -18,7 +20,9 @@ function Onboarding({ onOnboard }: OnboardingProps) {
     setLoading(true);
     try {
       const response = await axios.post(`${API_BASE}/contributors/onboard`, {
-        githubUsername: githubUsername.trim()
+        githubUsername: githubUsername.trim(),
+        githubId: githubId.trim() || undefined,
+        githubProfileUrl: githubProfileUrl.trim() || undefined
       });
       setResult(response.data);
       onOnboard();
@@ -39,7 +43,7 @@ function Onboarding({ onOnboard }: OnboardingProps) {
     <div className="animated-rise mx-auto max-w-3xl space-y-5">
       <div>
         <h2 className="section-title">Contributor Onboarding</h2>
-        <p className="section-subtitle">Generate your DID and receive a verifiable credential in one secure flow.</p>
+        <p className="section-subtitle">Generate your DID, bind GitHub identity, and receive a verifiable credential.</p>
       </div>
 
       <div className="glass-panel p-6 sm:p-7">
@@ -55,12 +59,34 @@ function Onboarding({ onOnboard }: OnboardingProps) {
             />
           </div>
 
+          <div>
+            <label className="label-text">GitHub Numeric ID</label>
+            <input
+              type="text"
+              value={githubId}
+              onChange={(e) => setGithubId(e.target.value)}
+              placeholder="Optional GitHub account ID"
+              className="input-premium"
+            />
+          </div>
+
+          <div>
+            <label className="label-text">GitHub Profile URL</label>
+            <input
+              type="text"
+              value={githubProfileUrl}
+              onChange={(e) => setGithubProfileUrl(e.target.value)}
+              placeholder="Optional GitHub profile URL"
+              className="input-premium"
+            />
+          </div>
+
           <button
             onClick={handleOnboard}
             disabled={loading || !githubUsername.trim()}
             className="btn-primary w-full"
           >
-            {loading ? 'Onboarding...' : 'Login with GitHub (Mock)'}
+            {loading ? 'Onboarding...' : 'Onboard Contributor'}
           </button>
         </div>
 
@@ -77,6 +103,22 @@ function Onboarding({ onOnboard }: OnboardingProps) {
               <h4 className="label-text">GPG Public Key Fingerprint</h4>
               <code className="code-shell">{result.gpgFingerprint}</code>
             </div>
+
+            {result.githubId && (
+              <div>
+                <h4 className="label-text">GitHub ID</h4>
+                <code className="code-shell">{result.githubId}</code>
+              </div>
+            )}
+
+            {result.githubProfileUrl && (
+              <div>
+                <h4 className="label-text">GitHub Profile URL</h4>
+                <a href={result.githubProfileUrl} target="_blank" rel="noreferrer" className="text-cyan-200 underline">
+                  {result.githubProfileUrl}
+                </a>
+              </div>
+            )}
 
             <div>
               <h4 className="label-text">Verifiable Credential (JWT)</h4>

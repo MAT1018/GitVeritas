@@ -23,30 +23,31 @@ graph TD
 
 ## Tech Stack
 
-- **Backend**: Node.js + TypeScript + Express
+- **Backend**: Node.js + Express
 - **Frontend**: React + TypeScript + Tailwind CSS
-- **DID/VC**: did-jwt-vc library with did:key method
-- **GPG Simulation**: tweetnacl for Ed25519 key generation
-- **Storage**: In-memory (prototype)
+- **DID/VC**: local mock DID/VC issuance with did:key-style identifiers
+- **GPG Simulation**: mock fingerprint generation
+- **Storage**: persisted local JSON storage (`backend/db.json`)
 
 ## Features
 
 ### 1. Contributor Onboarding
-- Mock GitHub OAuth (username input)
-- Automatic DID generation (did:key)
-- Ed25519 key pair generation for GPG simulation
+- GitHub identity binding with username, optional GitHub ID, and profile URL
+- Automatic DID generation (did:key-style)
 - Verifiable Credential issuance and storage
+- Persistent contributor storage in a local backend database
 
 ### 2. Contributor Registry
 - List all onboarded contributors
 - View DID Documents and VC details
-- Visualize trust chain (Issuer → VC → Contributor)
+- View GitHub binding metadata and trust chain details
 
 ### 3. PR Verification Simulator
-- Mock PR submission with GitHub username
+- Mock PR verification by GitHub username and PR URL
 - VC signature verification
 - GPG fingerprint matching
-- GitHub-style status check results
+- Optional Verifiable Presentation generation and verification
+- GitHub webhook scaffold for pull request verification
 
 ### 4. Educational Explainer
 - Step-by-step breakdown of DID/VC concepts
@@ -83,12 +84,20 @@ graph TD
 ## API Endpoints
 
 ### Contributors
-- `POST /api/contributors/onboard` - Onboard a new contributor
+- `POST /api/contributors/onboard` - Onboard a new contributor with GitHub metadata
 - `GET /api/registry/contributors` - List all contributors
 - `GET /api/registry/contributors/:did` - Get contributor details
 
+### Presentations
+- `POST /api/presentations/create` - Create a mock verifiable presentation for a contributor
+- `POST /api/presentations/verify` - Verify a presentation payload
+
 ### Verification
-- `POST /api/verification/verify-pr` - Verify a pull request
+- `POST /api/verification/verify-pr` - Verify a pull request with VC, GPG signature, and optional presentation
+
+### GitHub Integration
+- `POST /api/github/webhook` - GitHub webhook scaffold for pull request events
+- `POST /api/github/status` - Simulated status-check update endpoint
 
 ### DID Resolution
 - `GET /api/did/:did` - Resolve a DID Document (mock)
@@ -114,19 +123,21 @@ graph TD
 
 ⚠️ **This is a prototype for educational purposes only!**
 
-- Private keys are sent to frontend (never do this in production)
-- In-memory storage (no persistence)
-- Simplified verification logic
-- Mock GPG signatures
+- Private keys are still generated locally and should not be exposed in production
+- Storage is persisted locally in `backend/db.json` but is not encrypted
+- Verification logic is simplified and intended for demo purposes
+- GitHub integration is scaffolded, not a production GitHub App
+- GPG signatures and VPs are still mocked
 
 ## Future Enhancements
 
-- [ ] SQLite/PostgreSQL persistence
+- [ ] Move from local JSON persistence to SQLite/PostgreSQL
 - [ ] Real DID resolver integration
 - [ ] VC expiry and revocation
-- [ ] JWT-VP (Verifiable Presentations)
-- [ ] Integration with real GitHub webhooks
-- [ ] Hedera DID method instead of did:key
+- [ ] Full JWT-VP and linked presentation flow
+- [ ] GitHub App integration with real webhook handling and status checks
+- [ ] Heka Identity Platform / Hiero ecosystem integration
+- [ ] Replace mock GPG and did:key-style identifiers with real DID methods
 
 ## License
 

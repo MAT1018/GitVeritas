@@ -6,6 +6,8 @@ const API_BASE = process.env.REACT_APP_API_BASE || '/api';
 interface Contributor {
   did: string;
   githubUsername: string;
+  githubId?: string | null;
+  githubProfileUrl?: string | null;
   vcStatus: string;
   vc: string;
   issuedAt: string;
@@ -55,6 +57,11 @@ function Registry({ contributors }: RegistryProps) {
                 >
                   <p className="font-semibold text-white">{contributor.githubUsername}</p>
                   <p className="mt-1 truncate text-xs text-slate-300">{contributor.did}</p>
+                  {contributor.githubProfileUrl && (
+                    <p className="mt-1 truncate text-xs text-slate-300 underline decoration-dotted text-cyan-200">
+                      {contributor.githubProfileUrl}
+                    </p>
+                  )}
                   <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-emerald-200">{contributor.vcStatus}</p>
                 </button>
               ))
@@ -77,6 +84,9 @@ function Registry({ contributors }: RegistryProps) {
                 <h4 className="label-text">Verifiable Credential</h4>
                 <p className="text-sm text-slate-100"><strong>Subject:</strong> {details.decodedVC.sub}</p>
                 <p className="mt-1 text-sm text-slate-100"><strong>GitHub:</strong> {details.decodedVC.vc.credentialSubject.githubUsername}</p>
+                {details.decodedVC.vc.credentialSubject.githubProfileUrl && (
+                  <p className="mt-1 text-sm text-slate-100"><strong>Profile:</strong> {details.decodedVC.vc.credentialSubject.githubProfileUrl}</p>
+                )}
                 <p className="mt-1 text-sm text-slate-100"><strong>GPG:</strong> {details.decodedVC.vc.credentialSubject.gpgPublicKeyFingerprint}</p>
               </div>
 
