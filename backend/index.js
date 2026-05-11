@@ -94,10 +94,10 @@ function createDID() {
   };
 }
 
-function createVC(credentialSubject, issuerDID) {
+function createVC(credentialSubject, issuerDID, subjectDID) {
   const vcPayload = {
     iss: issuerDID,
-    sub: issuerDID,
+    sub: subjectDID,
     iat: Math.floor(Date.now() / 1000),
     vc: {
       '@context': ['https://www.w3.org/2018/credentials/v1'],
@@ -231,6 +231,9 @@ function buildVerificationResult({ contributor, prUrl, gpgSignature, presentatio
 
 loadDatabase();
 
+// Platform issuer DID (fixed authority)
+const PLATFORM_ISSUER_DID = process.env.PLATFORM_ISSUER_DID || createDID().did;
+
 app.post('/api/contributors/onboard', (req, res) => {
   const { githubUsername, githubId, githubProfileUrl } = req.body;
   if (!githubUsername) {
@@ -243,19 +246,18 @@ app.post('/api/contributors/onboard', (req, res) => {
     return res.status(409).json({ error: 'Contributor already onboarded' });
   }
 
-  const { did, privateKey, publicKey } = createDID();
+  const { did: contributorDID, privateKey, publicKey } = createDID();
   const fingerprint = crypto.randomBytes(4).toString('hex').toUpperCase();
   const vc = createVC({
     githubUsername: normalizedUsername,
     githubId: githubId || 'unknown',
     githubProfileUrl: githubProfileUrl || null,
     gpgPublicKeyFingerprint: fingerprint,
-    issuedAt: new Date().toISOString(),
-    issuerDID: did
-  }, did);
+    issuedAt: new Date().toISOString()
+  }, PLATFORM_ISSUER_DID, contributorDID);
 
   credentials[normalizedUsername] = {
-    did,
+    did: contributorDID,
     vc,
     githubUsername: normalizedUsername,
     githubId: githubId || null,
@@ -268,12 +270,13 @@ app.post('/api/contributors/onboard', (req, res) => {
   saveDatabase();
 
   res.json({
-    did,
+    did: contributorDID,
     vc,
     gpgFingerprint: fingerprint,
     githubUsername: normalizedUsername,
     githubId: githubId || null,
-    githubProfileUrl: githubProfileUrl || null
+    githubProfileUrl: githubProfileUrl || null,
+    issuer: PLATFORM_ISSUER_DID
   });
 });
 
